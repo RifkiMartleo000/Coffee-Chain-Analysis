@@ -1,0 +1,1044 @@
+---
+title: "**Analisis Regresi Robust Estimasi S Pengaruh *Sales*, *Inventory*, dan *Marketing* terhadap *Profit* pada *Coffee Chain Datasets* Tahun 2012-2013**"
+author: "Rifki Martleo Alfiansyah | M0723076"
+output: 
+  html_document:
+    toc: true             
+    toc_float: true       
+    code_folding: show
+    css: "custom.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+if (requireNamespace("thematic")) 
+  thematic::thematic_rmd(font = "auto")
+```
+
+<!-- Custom CSS untuk tema, font, dan background bergerak -->
+<style>
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --link-color: #0066cc;
+  --header-color: #000000;
+  --border-color: #dddddd;
+  --code-bg: #ffffff;
+  --highlight-color: #f5f5f5;
+  --toc-bg: rgba(255, 255, 255, 0.9);
+  --toc-text: #333333;
+  --toc-header-bg: #2980b9;
+  --toc-item-bg: rgba(255, 255, 255, 0.8);
+  --toc-item-text: #333333;
+  --toc-active-bg: #f5f5f5;
+  --toc-border: #dddddd;
+  --particles-bg: #ffffff;
+  --particles-color: #000000;
+  --content-bg: rgba(210, 210, 210, 0.8);
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --text-color: #e0e0e0;
+  --link-color: #6699ff;
+  --header-color: #cccccc;
+  --border-color: #555555;
+  --code-bg: #ffffff;
+  --highlight-color: #333333;
+  --toc-bg: rgba(20, 20, 20, 0.9);
+  --toc-text: #e0e0e0;
+  --toc-header-bg: #205880;
+  --toc-item-bg: rgba(51, 51, 51, 0.8);
+  --toc-item-text: #e0e0e0;
+  --toc-active-bg: #444444;
+  --toc-border: #555555;
+  --particles-bg: #121212;
+  --particles-color: #bbbbbb;
+  --content-bg: rgba(40, 40, 40, 0.8);
+}
+
+[data-theme="system"] {
+  --bg-color: #350400;
+  --text-color: #ffffff;
+  --header-color: #a95519;
+  --toc-bg: rgba(34, 0, 0, 0.9);
+  --toc-item-bg: rgba(208, 208, 208, 0.1);
+  --toc-item-text: #ffffff;
+  --toc-border: #999999;
+  --particles-bg: #2a0000;
+  --particles-color: #ff9966;
+  --content-bg: rgba(83, 4, 0, 0.8);
+  --link-color: #ff9966;
+  --toc-header-bg: #5a1c00;
+  --code-bg: #ffffff;
+}
+
+body {
+  color: var(--text-color);
+  font-family: Bahnschrift;
+  transition: all 0.3s ease;
+  margin: 0;
+  padding: 0;
+  /* Background will be controlled by particles.js */
+  background-color: transparent;
+}
+
+/* Particles container */
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-color: var(--particles-bg);
+  transition: background-color 0.3s ease;
+}
+
+.main-content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--content-bg);
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--header-color);
+}
+
+a {
+  color: var(--link-color);
+}
+
+code {
+  background-color: var(--code-bg);
+}
+
+pre {
+  background-color: var(--code-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}
+
+.toc-content {
+  background-color: transparent;
+}
+
+#TOC {
+  background-color: var(--toc-bg);
+  color: var(--toc-text);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+#TOC .toc-header {
+  background-color: var(--toc-header-bg);
+  color: white;
+  padding: 10px 15px;
+  margin: 0;
+  font-weight: bold;
+}
+
+#TOC ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#TOC li {
+  border-bottom: 1px solid var(--toc-border);
+}
+
+#TOC li:last-child {
+  border-bottom: none;
+}
+
+#TOC a {
+  display: block;
+  padding: 10px 15px;
+  color: var(--toc-item-text);
+  background-color: var(--toc-item-bg);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+#TOC a:hover {
+  background-color: var(--toc-active-bg);
+  color: var(--link-color);
+}
+
+#TOC .active a {
+  background-color: var(--toc-active-bg);
+  color: var(--link-color);
+  font-weight: bold;
+  border-left: 4px solid var(--link-color);
+}
+
+/* Nested items indentation */
+#TOC ul ul a {
+  padding-left: 30px;
+}
+
+#TOC ul ul ul a {
+  padding-left: 45px;
+}
+
+.controls-panel {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: var(--toc-bg);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid var(--border-color);
+  width: 240px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.font-size-control {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.font-size-control label {
+  font-weight: bold;
+  margin-right: 8px;
+  min-width: 60px;
+}
+
+.theme-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.theme-control label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.theme-toggle {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.theme-btn {
+  flex-grow: 1;
+  padding: 6px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+#light-btn {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+#dark-btn {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+#system-btn {
+  background-color: #350400;
+  color: #ffffff;
+}
+
+.active-theme {
+  box-shadow: 0 0 0 2px #0066cc;
+}
+
+input[type="range"] {
+  width: 90px;
+  margin: 0 8px 0 0;
+}
+
+#fontSizeValue {
+  min-width: 35px;
+  display: inline-block;
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+  .controls-panel {
+    position: static;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+}
+</style>
+
+<div id="particles-js"></div>
+
+<div class="main-content">
+
+![sumber: Starjogja.com](kopi.png)
+
+<h1>**Deskripsi Data**</h1>
+<p style="text-indent: 2em; text-align: justify;">
+*Coffee Chain Datasets* ini memuat informasi penjualan dan performa keuangan dari berbagai produk dalam jaringan kedai kopi, mencakup atribut lokasi geografis, jenis produk, ukuran pasar, dan pencapaian anggaran. Berdasarkan *Coffee Chain Datasets*, terdapat beberapa insight menarik terkait performa penjualan dan profitabilitas produk kopi dan teh di berbagai wilayah Amerika Serikat. Produk utama dalam data ini adalah kopi (seperti *Colombian*, *Amaretto*, *Decaf Irish Cream*, *Caffe Mocha*) dan teh (*Green Tea*, *Earl Grey*, *Chamomile*, *Lemon, Mint*, *Darjeeling*), dengan segmentasi lebih lanjut pada tipe produk seperti *regular* dan *decaf*, serta pembagian pasar menjadi *Major Market* dan *Small Market* di wilayah *Central*, *East*, *South*, dan *West*.
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Secara keseluruhan, *insight* dari data ini menunjukkan pentingnya fokus pada produk-produk unggulan di wilayah *Major Market*, optimalisasi manajemen stok untuk menghindari *over-inventory*, serta penyesuaian strategi pemasaran agar lebih tepat sasaran. Selain itu, perlu dilakukan evaluasi terhadap portofolio produk di *Small Market*, khususnya untuk produk yang secara konsisten memberikan *profit* negatif, agar sumber daya dapat dialokasikan dengan lebih efisien dan profitabilitas bisnis dapat ditingkatkan. Dengan cakupan data yang luas ini, terdapat peluang untuk mengeksplorasi pola penjualan berdasarkan wilayah, tipe produk, dan ukuran pasar, serta untuk mengidentifikasi faktor-faktor yang memengaruhi profitabilitas dan efisiensi operasional. 
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+*Dataset* ini memungkinkan analisis perbandingan antara anggaran dan realisasi aktual dari sisi keuangan sehingga dapat memberikan gambaran tentang efektivitas strategi bisnis yang telah dijalankan. Melalui analisis lebih mendalam nantinya, diharapkan dapat ditemukan insight terkait produk atau wilayah yang paling potensial, efisiensi penggunaan anggaran, serta area yang memerlukan perbaikan dalam rantai pasok atau pemasaran. Hal ini tentunya akan menjadi dasar untuk mengarahkan fokus analisis pada tahap selanjutnya.
+</p>
+
+<p>
+🔗 ***Dataset* yang digunakan:**
+[*Coffee Chain Datasets*](https://www.kaggle.com/datasets/arjunbhaybhang/coffee-chains-dataset)
+</p>
+
+
+<h1>**Landasan Teori**</h1>
+
+<h2>**A. Uji Asumsi Klasik**</h2>
+<p style="text-indent: 2em; text-align: justify;">
+Uji asumsi klasik dalam regresi linear digunakan untuk memastikan bahwa model regresi yang dibuat valid, andal, dan tidak bias sehingga hasilnya dapat dipercaya untuk analisis dan prediksi. Asumsi klasik ini adalah syarat yang harus dipenuhi agar metode *Ordinary Least Squares* (OLS) menghasilkan *estimator* yang *Best Linear Unbiased Estimator* (BLUE). Uji asumsi klasik dilakukan dengan tujuan untuk memastikan *estimator* regresi (koefisien) tidak bias dan menghindari kesalahan inferensi statistik, seperti kesalahan dalam uji signifikansi atau interval kepercayaan.
+</p>
+
+<h3>**1. Uji Normalitas**</h3>
+<p style="text-indent: 2em; text-align: justify;">
+Asumsi normalitas menyatakan bahwa *error* (residu) dari model regresi harus berdistribusi normal. Asumsi ini penting untuk validitas uji statistik seperti uji-t dan uji-F, terutama pada sampel kecil. Pada sampel besar, asumsi ini kurang kritis karena *Central Limit Theorem* memastikan distribusi *estimator* mendekati normal (Gujarati & Porter, 2009).
+</p>
+
+<p style="text-align: justify;">
+Metode Pengujian:
+</p>
+<p style="text-align: justify;">
+* Uji Statistik: Uji Shapiro-Wilk, Kolmogorov-Smirnov, atau Jarque-Bera untuk menguji normalitas residu.
+* Pendekatan Grafis: Histogram residu atau *Q-Q plot* untuk memvisualisasikan distribusi residu.
+* Interpretasi: Jika *p-value* dari uji statistik < 0,05, maka residu tidak normal.
+</p>
+<p style="text-align: justify;">
+Jika *Q-Q plot* menunjukkan titik-titik menyimpang dari garis lurus, maka normalitas tidak terpenuhi.
+</p>
+
+<h3>**2. Uji Homogenitas**</h3>
+<p style="text-indent: 2em; text-align: justify;">
+Homoskedastisitas berarti variansi *error* konstan untuk semua nilai variabel independen. Jika variansi *error* tidak konstan (heteroskedastisitas), *estimator* OLS tetap tidak bias tetapi tidak efisien sehingga *standard error* dan uji signifikansi menjadi tidak valid (Wooldridge, 2013).
+</p>
+
+<p style="text-align: justify;">
+Metode Pengujian:
+</p>
+<p style="text-align: justify;">
+* Uji Statistik: Uji Breusch-Pagan atau *White Test* untuk mendeteksi heteroskedastisitas.
+* Pendekatan Grafis: *Scatter plot* residu terhadap nilai prediksi (*fitted values*). Jika pola residu membentuk corong (*funnel shape*), maka terdapat indikasi heteroskedastisitas.
+* Interpretasi: Jika *p-value* uji < 0,05, maka asumsi homoskedastisitas dilanggar. 
+</p>
+<p style="text-align: justify;">
+Perbaikan dapat dilakukan dengan transformasi data atau metode *Weighted Least Squares* (WLS).
+</p>
+
+<h3>**3. Uji Non-Autokorelasi**</h3>
+<p style="text-indent: 2em; text-align: justify;">
+Asumsi non-autokorelasi menyatakan bahwa *error* tidak boleh berkorelasi satu sama lain, terutama pada data deret waktu (*time series*). Autokorelasi menyebabkan *standard error* bias sehingga uji signifikansi tidak akurat (Gujarati & Porter, 2009).
+</p>
+
+<p style="text-align: justify;">
+Metode Pengujian:
+</p>
+<p style="text-align: justify;">
+* Uji Statistik: Uji Durbin-Watson untuk mendeteksi autokorelasi orde satu. Nilai Durbin-Watson mendekati 2 menunjukkan tidak ada autokorelasi; nilai < 2 menunjukkan autokorelasi positif, dan > 2 menunjukkan autokorelasi negatif.
+* Uji Alternatif: Uji Breusch-Godfrey untuk autokorelasi orde lebih tinggi.
+* Interpretasi: Jika *p-value* uji < 0,05 atau nilai Durbin-Watson jauh dari 2, maka terdapat autokorelasi. 
+</p>
+<p style="text-align: justify;">
+Perbaikan dapat dilakukan dengan menambahkan variabel *lag* atau menggunakan model seperti Cochrane-Orcutt.
+</p>
+
+<h3>**4. Uji Non-Multikolinearitas**</h3>
+<p style="text-indent: 2em; text-align: justify;">
+Asumsi non-multikolinearitas menyatakan bahwa variabel independen dalam regresi berganda tidak boleh memiliki korelasi sempurna atau sangat tinggi. Multikolinearitas menyebabkan koefisien regresi tidak stabil dan sulit diinterpretasikan (Wooldridge, 2013).
+</p>
+
+<p style="text-align: justify;">
+Metode Pengujian:
+</p>
+<p style="text-align: justify;">
+* Uji Statistik: *Variance Inflation Factor* (VIF). Jika VIF > 10, ada indikasi multikolinearitas.
+* Pendekatan Alternatif: Matriks korelasi antar variabel independen. Korelasi > 0,8 menunjukkan potensi multikolinearitas.
+* Interpretasi: Jika VIF tinggi, maka variabel independen yang berkorelasi tinggi dapat dihapus, digabung, atau dianalisis dengan teknik seperti *Principal Component Analysis* (PCA).
+</p>
+
+<h3>**5. Uji Linearitas**</h3>
+<p style="text-indent: 2em; text-align: justify;">
+Asumsi linearitas menyatakan bahwa hubungan antara variabel independen dan dependen harus linear dalam parameter. Jika hubungan tidak linear, maka model regresi akan menghasilkan prediksi yang bias dan tidak akurat (Gujarati & Porter, 2009).
+</p>
+
+<p style="text-align: justify;">
+Metode Pengujian:
+</p>
+<p style="text-align: justify;">
+* Pendekatan Grafis: *Scatter plot* antara variabel independen dan dependen, atau plot residual terhadap nilai prediksi untuk mendeteksi pola non-linear.
+* Uji Statistik: Uji Ramsey Regression Specification Error Test (RESET) untuk memeriksa apakah model mengalami *misspecification* (misalnya, hubungan *non-linear*).
+* Interpretasi: Jika *scatter plot* menunjukkan pola *non-linear* atau *p-value* uji Ramsey RESET < 0,05, maka asumsi linearitas dilanggar. 
+</p>
+<p style="text-align: justify;">
+Perbaikan dapat dilakukan dengan transformasi variabel (misalnya, logaritma atau kuadrat) atau menggunakan model *non-linear*.
+</p>
+
+<h2>**B. Regresi Robust Estimasi S**</h2>
+<p style="text-indent: 2em; text-align: justify;">
+Metode estimasi S (*S-estimation*) adalah salah satu pendekatan dalam regresi robust yang dirancang untuk menghasilkan *estimator* yang tahan terhadap *outlier* baik pada variabel dependen (Y) maupun variabel independen (X). Estimasi S bertujuan untuk meminimalkan skala residu (*scale of residuals*) dengan cara yang *robust* sehingga menghasilkan koefisien regresi yang tidak terlalu dipengaruhi oleh observasi ekstrem. Pendekatan ini termasuk dalam kelompok *estimator* berbasis skala (*scale-based estimators*) dan memiliki *breakdown point* yang tinggi, yaitu mampu menangani hingga hampir 50% data *outlier* tanpa menghasilkan estimasi yang tidak valid (Rousseeuw & Leroy, 1987).
+</p>
+
+<p style="text-align: justify;">
+Model egresi robust estimasi S didefinisikan sebagai berikut:
+</p>
+
+$$\hat{\beta}_S = min_{\beta}\hat{\sigma}_S(e_1, e_2, ..., e_n) \tag{1.1}$$
+
+<p style="text-align: justify;">
+dengan $\hat{\beta}$ adalah *estimator* regresi, $e_1, e_2, ..., e_n$ adalah residu, dan $\hat{\sigma}_S$ adalah nilai *estimator* skala *robust* yang minimum dan memenuhi:
+</p>
+
+$$min \sum_{i=1}^{n} \rho \left(\frac{Y_i - \sum_{j=0}^{k} x_{ij}\beta}{\hat{\sigma}_S}\right) \tag{1.2}$$
+
+<p style="text-align: justify;">
+Estimator parameter skala *robust* pada estimasi S dinyatakan sebagai berikut:
+</o>
+
+$$\hat{\sigma}_S = 
+\begin{cases}
+\frac{median|e_i - median(e_i)|}{0.6745}, & \text{iterasi} = 1 \\
+\sqrt{\frac{1}{nK}\sum_{i=1}^{n}w_ie_i^2}, & \text{iterasi} > 1
+\end{cases} \tag{1.3}$$
+
+<p style="text-align: justify;">
+dengan $K = 0.199$. Fungsi $\rho$ adalah fungsi objektif *Tukey's Bisquare*:
+</p>
+
+$$\rho(u_{iS}) = 
+\begin{cases}
+\frac{u_{iS}^2}{2} - \frac{u_{iS}^4}{2c^2} + \frac{u_{iS}^6}{6c^4}, & |u_{iS}| \leq c \\
+\frac{c^2}{6}, & |u_{iS}| > c
+\end{cases}$$
+
+dengan nilai $c = 1.5470$ dan $u_{iS} = \frac{e_i}{\hat{\sigma}_S}$
+
+<p style="text-align: justify;">
+Untuk meminimumkan persamaan (2.2) maka diturunkan secara parsial terhadap $\beta$ sehingga didapatkan persamaan sebagai berikut:
+</p>
+
+$$\sum_{i=1}^{n}X_{ij}\psi\left(\frac{Y_i - \sum_{j=0}^{k}x_{ij}\beta}{\hat{\sigma}_S}\right) = 0, \quad j = 0,1,...,k \tag{1.4}$$
+
+<p style="text-align: justify;">
+$\psi$ adalah $\rho'$ dan $X_{ij}$ adalah observasi ke-$i$ pada variabel independen ke-$j$.
+Persamaan (1.4) dapat diselesaikan dengan mendefinisikan suatu fungsi pembobot:
+</p>
+
+$$
+w(u_{iS}) = 
+\left\{
+\begin{array}{ll}
+\left\{
+\begin{array}{ll}
+\frac{u_{iS}\left(1-\frac{u_{iS}^2}{c^2}\right)^2}{u_{iS}}, & |u_i| \leq c, \quad \text{iterasi} = 1 \\
+0, & |u_i| > c
+\end{array}
+\right. \\
+\frac{\rho(u_{iS})}{u_{iS}^2}, & \text{iterasi} > 1
+\end{array}
+\right.
+\tag{1.5}
+$$
+<p style="text-indent: 2em; text-align: justify;">
+Prinsip Regresi Robust estimasi S, yaitu dengan mencoba meminimalkan suatu fungsi skala *robust* (biasanya menggunakan fungsi *M-estimation* seperti fungsi *Tukey’s biweight*) dari residu. Skala ini mengukur seberapa tersebar residu secara *robust*, berbeda dari OLS yang meminimalkan jumlah kuadrat residu.
+Prosesnya melibatkan pencarian koefisien regresi yang menghasilkan skala residu terkecil dengan mempertimbangkan bobot yang lebih kecil untuk residu besar (*outlier*).
+Estimasi S menggunakan pendekatan iteratif, sering kali melalui algoritma seperti *Iteratively Reweighted Least Squares* (IRLS), untuk mencapai konvergensi.
+</p>
+
+
+
+<h1>***Source Code***</h1>
+
+<h2>**A. *Library***</h2>
+<p>*Package* yang digunakan pada analisis data *Coffee Chain Datasets*</p>
+```{r library, message=FALSE, warning=FALSE}
+library(readxl)
+library(car)
+library(stats)
+library(knitr)
+library(lmtest) 
+library(robustbase)
+```
+
+<h2>**B. *Import Data***</h2>
+<p style="text-indent: 2em; text-align: justify;">
+Data yang digunakan untuk analisis, yaitu *profit*, *sales*, *inventory*, dan *marketing*. Variabel-variabel tersebut dipilih karena *profit* adalah indikator utama kinerja finansial dalam bisnis *coffee chain*, *sales* adalah sumber utama pendapatan dalam bisnis ritel seperti rantai kopi, *inventory* mencakup bahan baku seperti biji kopi, susu, atau kemasan yang mengharuskan perusahaan mengelola persediaan yang efisien dapat mengurangi biaya penyimpanan atau pemborosan sehingga bertujuan meningkatkan profit, dan pengeluaran untuk *marketing* (iklan, promosi, maupun kampanye media sosial) dapat meningkatkan terkenalnya *brand* dan menarik pelanggan yang pada akhirnya meningkatkan penjualan dan *profit*.
+</p>
+```{r Data, message=FALSE, warning=FALSE}
+data <- read_excel("C:/Users/AS/Downloads/3. CM1 - Coffee Chain Datasets.xlsx")
+datafix <- data[, c("Profit", "Sales", "Inventory", "Marketing")]
+kable(head(datafix))
+```
+
+<h2>**C. Statistika Deskriptif**</h2>
+<p style="text-indent: 2em; text-align: justify;">
+Melihat statistika deskriptif pada *Coffee Chains Dataset* dengan variabel profit sebagai variabel dependen dan sales, inventory, serta marketing sebagai variabel independen untuk memberikan gambaran awal tentang distribusi, pusat data, penyebaran, dan potensi anomali seperti *outlier* ataupun *missing values* yang dapat memengaruhi validitas model regresi. Statistika deskriptif membantu memahami konteks bisnis, seperti performa penjualan rata-rata, efisiensi pengelolaan persediaan, dan variasi anggaran pemasaran sehingga mendukung interpretasi hasil regresi yang relevan dengan keputusan strategis.
+</p>
+```{r descriptive, message=FALSE, warning=FALSE}
+kable(summary(datafix))
+```
+
+<h2>**D. Model Metode Kuadrat Terkecil**</h2>
+<p style="text-indent: 2em; text-align: justify;">
+Melihat model regresi berganda berguna untuk menetapkan *baseline* estimasi, mengidentifikasi pelanggaran asumsi klasik dan mendeteksi observasi berpengaruh menggunakan metrik seperti DFFITS sehingga dapat diputuskan apakah regresi robust diperlukan untuk menghasilkan estimasi yang lebih andal dan relevan untuk keputusan bisnis.
+</p>
+```{r mkt, message=FALSE, warning=FALSE}
+mkt=lm(Profit ~ Sales + Inventory + Marketing, data = datafix)
+summary(mkt)
+```
+
+<p style="text-align: justify;">
+Diperoleh model regresi sebagai berikut:
+</p>
+$$Y = -11.85361 + 0.85748X_1 - 0.03445X_2 - 2.1393X_3$$
+
+<p style="text-align: justify;">
+Interpretasi estimasi model persamaan regresi:
+</p>
+
+<p style="text-align: justify;">
+1. Jika semua variabel independen bernilai nol, maka nilai prediksi *profit* (Y) adalah -11.85361 dolar.
+</p>
+
+<p style="text-align: justify;">
+2. Untuk setiap kenaikan satu unit dalam *sales* akan meningkatkan *profit* sebesar 0.85748 dolar
+</p>
+
+<p style="text-align: justify;">
+3. Untuk setiap kenaikan satu unit dalam *inventory* akan menurunkan *profit* sebesar 0.03445 dolar
+</p>
+
+<p style="text-align: justify;">
+4. Untuk setiap kenaikan satu dolar dalam *marketing* akan menurunkan *profit* sebesar 2.1393 dolar
+</p>
+
+<p style="text-align: justify;">
+Pada model metode kuadrat terkecil, diperoleh nilai *Adjusted R-squared* = 0.9082 yang berarti bahwa *profit* mampu dijelaskan oleh variabel *sales*, *inventory*, dan *marketing* sebesar 90.82%, sedangkan sisanya (9.18%) dijelaskan oleh faktor lain yang belum diujikan pada model.
+</p>
+
+<h2>**E. Uji Signifikansi**</h2>
+<p style="text-indent: 2em; text-align: justify;">
+Berdasarkan hasil dari model regresi pada bagian sebelumnya, dikarenakan *p-value* $< 2.2 \times 10^{-16}$ memiliki nilai lebih kecil daripada $\alpha$ = 0.05, maka kita memiliki cukup bukti untuk menolak $H_0$ sehingga setidaknya terdapat pengaruh yang signifikan antara *sales*, *inventory*, dan *marketing* terhadap *profit* secara simultan.
+</p>
+
+<h2>**F. Uji Parsial**</h2>
+<p style="text-align: justify;">
+Berdasarkan hasil dari model regresi pada bagian metode kuadrat terkecil, didapatkan:
+</p>
+<p style="text-indent: 2em; text-align: justify;">
+* *p_value* dari *sales* $(X_1) < 2.2 \times 10^{-16}$
+* *p_value* dari *inventory* $(X_2) < 2.2 \times 10^{-16}$
+* *p_value* dari *marketing*  $(X_3) < 2.2 \times 10^{-16}$
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Dikarenakan semua *p-value* dari variabel $X_1, X_2,dan X_3$ memiliki nilai lebih kecil daripada $\alpha$ = 0.05, maka kita memiliki cukup bukti untuk menolak $H_0$ sehingga *sales*, *inventory*, dan *marketing* berpengaruh secara signifikan terhadap *profit*.
+</p>
+
+<h2>**G. Uji Asumsi**</h2>
+<h3>**1. Uji Normalitas**</h3>
+<p style="text-align: justify;">
+Dalam kasus ini, kita gunakan uji Kolmogorov-Smirnov yang dikarenakan ukuran datanya yang besar (>50 data).
+</p>
+
+<p style="text-align: justify;">
+$H_0$ : Residu berdistribusi normal
+</p>
+
+<p style="text-align: justify;">
+$H_1$ : Residu tidak berdistribusi normal
+</p>
+
+```{r normality, message=FALSE, warning=FALSE}
+ks.test(mkt$residuals, 'pnorm')
+```
+
+<p style="text-align: justify;">
+Berdasarkan *output* di atas, didapatkan *p-value* $< 2.2 \times 10^{-16}$ yang berarti memiliki nilai lebih kecil daripada $\alpha$ = 0.05, maka $H_0$ ditolak sehingga residu tidak berdistribusi normal.
+</p>
+
+<h3>**2. Uji Homogenitas**</h3>
+<p style="text-align: justify;">
+Dalam kasus ini, kita gunakan uji Breusch-Pagan untuk memeriksa apakah variansi residual konstan (homogen) di seluruh nilai variabel independen.
+</p>
+
+<p style="text-align: justify;">
+$H_0$ : Varians residu konstan (homogen)
+</p>
+
+<p style="text-align: justify;">
+$H_1$ : Varians residu tidak konstan (heterogen)
+</p>
+
+```{r homogenity, message=FALSE, warning=FALSE}
+bptest(mkt)
+```
+
+<p style="text-align: justify;">
+Berdasarkan *output* di atas, didapatkan *p-value* $< 2.2 \times 10^{-16}$ yang berarti memiliki nilai lebih kecil daripada $\alpha$ = 0.05, maka $H_0$ ditolak sehingga datanya tidak homogen.
+</p>
+
+<h3>**3. Uji Non-Autokorelasi**</h3>
+<p style="text-align: justify;">
+Dalam kasus ini, kita gunakan uji Durbin-Watson untuk non-autokorelasi dalam residual model regresi linear, khususnya untuk mendeteksi apakah terdapat autokorelasi orde satu (korelasi antara residual pada waktu atau urutan yang berdekatan).
+</p>
+
+<p style="text-align: justify;">
+$H_0$ : Tidak terdapat autokorelasi
+</p>
+
+<p style="text-align: justify;">
+$H_1$ : Terdapat autokorelasi
+</p>
+
+```{r autocorr, message=FALSE, warning=FALSE}
+dwtest(mkt)
+```
+
+<p style="text-align: justify;">
+Berdasarkan *output* di atas, didapatkan *p-value* = 0.05059 yang berarti memiliki nilai lebih besar daripada $\alpha$ = 0.05, maka $H_0$ gagal ditolak sehingga tidak terdapat autokorelasi.
+</p>
+
+<h3>**4. Uji Non-Multikolinearitas**</h3>
+<p style="text-align: justify;">
+Dalam kasus ini, kita gunakan uji *Variance Inflation Factor* (VIF) yang digunakan untuk menguji non-multikolinearitas dalam model regresi linear, yaitu untuk memeriksa apakah variabel independen dalam model memiliki korelasi yang tinggi satu sama lain.
+</p>
+
+<p style="text-align: justify;">
+$H_0$ : Tidak terdapat multikolinearitas
+</p>
+
+<p style="text-align: justify;">
+$H_1$ : Terdapat multikolinearitas
+</p>
+
+```{r multicolinearity, message=FALSE, warning=FALSE}
+vif(mkt)
+```
+
+<p style="text-align: justify;">
+Berdasarkan *output* di atas, didapatkan nilai VIF *sales* = 2.023693, *inventory* = 1.332129, dan *marketing* = 2.404461 yang berarti memiliki nilai $<$ 10, maka $H_0$ gagal ditolak sehingga tidak terdapat multikolinearitas.
+</p>
+
+<h3>**5. Uji Linearitas**</h3>
+<p style="text-align: justify;">
+Dalam kasus ini, kita gunakan uji Ramsey RESET yang digunakan untuk menguji linearitas dalam model regresi linear, yaitu untuk memeriksa apakah hubungan antara variabel dependen dan variabel independen telah ditentukan dengan benar dalam bentuk linear atau apakah ada komponen non-linear yang terlewat.
+</p>
+
+<p style="text-align: justify;">
+$H_0$ : Model linear sesuai
+</p>
+
+<p style="text-align: justify;">
+$H_1$ : Model linear tidak sesuai
+</p>
+
+```{r linearity, message=FALSE, warning=FALSE}
+resettest(mkt, power = 2:3, type = "fitted")
+```
+
+<p style="text-align: justify;">
+Berdasarkan *output* di atas, didapatkan *p-value* $< 2.2 \times 10^{-16}$ yang berarti memiliki nilai lebih kecil daripada $\alpha$ = 0.05, maka $H_0$ ditolak sehingga asumsi linearitas tidak terpenuhi.
+</p>
+
+<h2>**H. Mendeteksi Pencilan**</h2>
+<p style="text-align: justify;">
+Menggunakan DFFITS untuk mendeteksi pencilan dari data yang dianalisis.
+</p>
+
+```{r outlier, message=FALSE, warning=FALSE}
+nilai.pembanding.dffits=2*(sqrt(4/4248))
+jumlah_outlier <- sum(abs(dffits(mkt)) > nilai.pembanding.dffits)
+jumlah_outlier
+```
+
+<p style="text-align: justify;">
+Berdasarkan *output* di atas, didapatkan sebanyak 371 data dari total 4248 adalah data pencilan yang berarti sekitar 8,73% dari data termasuk observasi yang berpengaruh atau tidak biasa. Persentase ini cukup signifikan dan dapat memengaruhi hasil model regresi linear.
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Setelah dilakukan uji asumsi klasik dan pendeteksian pencilan, diketahui bahwa masih terdapat asumsi yang tidak terpenuhi, yaitu asumsi normalitas, homogenitas, dan linearitas. Kondisi ini juga diperparah dengan terdapat banyaknya data pencilan yang memengaruhi model regresi linear. *Treatment* khusus dari data ini diperlukan agar hasil analisis diperoleh secara akurat dan relevan. Dalam hal ini, *treatment* yang digunakan adalah pemodelan regresi robust untuk menangani masalah asumsi yang tidak terpenuhi dan menangani masalah pencilan.
+</p>
+<h1>**Model Regresi Robust**</h1>
+<p style="text-align: justify;">
+Membangun model regresi robust untuk menangani berbagai asumsi klasik yang tidak terpenuhi dan menangani masalah pencilan dalam *Coffee Chain Datasets*.
+</p>
+
+```{r robust, message=FALSE, warning=FALSE}
+model_robust <- lmrob(Profit ~ Sales + Inventory + Marketing, data = datafix, method = "S", 
+                      psi = "bisquare", tuning.chi = 3.44, k.max = 200)
+summary(model_robust)
+```
+<p style="text-align: justify;">
+Diperoleh model regresi sebagai berikut:
+</p>
+$$Y = -22.14 + 1.031X_1 + 0.0105X_2 - 4.63X_3$$
+
+<p style="text-align: justify;">
+Interpretasi estimasi model persamaan regresi robust:
+</p>
+
+<p style="text-align: justify;">
+1. Jika semua variabel independen bernilai nol, maka nilai prediksi *profit* (Y) adalah -22.14 dolar.
+</p>
+
+<p style="text-align: justify;">
+2. Untuk setiap kenaikan satu unit dalam *sales* akan meningkatkan *profit* sebesar 1.031 dolar
+</p>
+
+<p style="text-align: justify;">
+3. Untuk setiap kenaikan satu unit dalam *inventory* akan menurunkan *profit* sebesar 0.0105 dolar
+</p>
+
+<p style="text-align: justify;">
+4. Untuk setiap kenaikan satu dolar dalam *marketing* akan menurunkan *profit* sebesar 4.63 dolar
+</p>
+
+<p style="text-align: justify;">
+Pada model metode kuadrat terkecil, diperoleh nilai *Adjusted R-squared* = 0.9887 yang berarti bahwa *profit* mampu dijelaskan oleh variabel *sales*, *inventory*, dan *marketing* sebesar 98.87%, sedangkan sisanya (1.13%) dijelaskan oleh faktor lain yang belum diujikan pada model.
+</p>
+
+<p style="text-align: justify;">
+Model regresi robust dengan metode S dan fungsi *bisquare* berhasil mengurangi pengaruh pencilan (seperti yang terdeteksi oleh DFFITS sebelumnya dengan ambang 0.06137164 untuk 4248 data) yang terlihat dari distribusi residu yang lebih terkontrol dibandingkan model OLS.
+</p>
+
+<h2>**A. Uji Signifikansi Robust**</h2>
+<p style="text-indent: 2em; text-align: justify;">
+Berdasarkan hasil dari model regresi pada bagian sebelumnya, dikarenakan *p-value* $< 2.2 \times 10^{-16}$ memiliki nilai lebih kecil daripada $\alpha$ = 0.05, maka kita memiliki cukup bukti untuk menolak $H_0$ sehingga setidaknya terdapat pengaruh yang signifikan antara *sales*, *inventory*, dan *marketing* terhadap *profit* secara simultan.
+</p>
+
+<h2>**B. Uji Parsial Robust**</h2>
+<p style="text-align: justify;">
+Berdasarkan hasil dari model regresi pada bagian metode kuadrat terkecil, didapatkan:
+</p>
+<p style="text-indent: 2em; text-align: justify;">
+* *p_value* dari *sales* $(X_1) < 2.2 \times 10^{-16}$
+* *p_value* dari *inventory* $(X_2) < 2.2 \times 10^{-16}$
+* *p_value* dari *marketing*  $(X_3) < 2.2 \times 10^{-16}$
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Dikarenakan semua *p-value* dari variabel $X_1, X_2,dan X_3$ memiliki nilai lebih kecil daripada $\alpha$ = 0.05, maka kita memiliki cukup bukti untuk menolak $H_0$ sehingga *sales*, *inventory*, dan *marketing* berpengaruh secara signifikan terhadap *profit*.
+</p>
+
+
+<h1>**Daftar Pustaka**</h1>
+<p style="text-indent: 2em; text-align: justify;">
+Gujarati, D. N., & Porter, D. C. (2009). *Basic Econometrics (5th ed.)*. McGraw-Hill.
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Minnick, C., & Holland, E. (2024). *HTML, CSS, & JavaScript all-in-one for dummies*. John Wiley & Sons.
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Rousseeuw, P. J., & Leroy, A. M. (1987). *Robust Regression and Outlier Detection*. John Wiley & Sons.
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Wooldridge, J. M. (2013). *Introductory Econometrics: A Modern Approach (5th ed.)*. South-Western.
+</p>
+
+<p style="text-indent: 2em; text-align: justify;">
+Xie, Y., Dervieux, C., & Riederer, E. (2020). *R Markdown cookbook*. Chapman and Hall/CRC. https://bookdown.org/yihui/rmarkdown-cookbook/
+</p>
+
+
+
+</div>
+
+```{=html}
+<div class="controls-panel">
+  <div class="control-group">
+    <div class="font-size-control">
+      <label for="fontSize">Ukuran Teks:</label>
+      <div class="range-container">
+        <input type="range" id="fontSize" min="12" max="24" value="16" step="1">
+        <span id="fontSizeValue">16px</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <div class="theme-control">
+      <label>Tema:</label>
+      <div class="theme-toggle">
+        <button id="light-btn" class="theme-btn active-theme">Terang</button>
+        <button id="dark-btn" class="theme-btn">Gelap</button>
+        <button id="system-btn" class="theme-btn">Sistem</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+<script>
+// Fungsi untuk memperbarui warna partikel sesuai tema
+function updateParticlesColors() {
+  const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particles-color').trim();
+  if (window.pJSDom && window.pJSDom.length > 0) {
+    window.pJSDom[0].pJS.particles.color.value = particleColor;
+    window.pJSDom[0].pJS.particles.line_linked.color = particleColor;
+    
+    // Refresh partikel
+    window.pJSDom[0].pJS.fn.particlesRefresh();
+  }
+}
+
+// Inisialisasi particles.js
+function initParticles() {
+  const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particles-color').trim();
+  
+  particlesJS('particles-js', {
+    "particles": {
+      "number": {
+        "value": 80,
+        "density": {
+          "enable": true,
+          "value_area": 800
+        }
+      },
+      "color": {
+        "value": particleColor
+      },
+      "shape": {
+        "type": "circle",
+        "stroke": {
+          "width": 0,
+          "color": "#000000"
+        },
+      },
+      "opacity": {
+        "value": 0.5,
+        "random": false,
+        "anim": {
+          "enable": false,
+          "speed": 1,
+          "opacity_min": 0.1,
+          "sync": false
+        }
+      },
+      "size": {
+        "value": 3,
+        "random": true,
+        "anim": {
+          "enable": false,
+          "speed": 40,
+          "size_min": 0.1,
+          "sync": false
+        }
+      },
+      "line_linked": {
+        "enable": true,
+        "distance": 150,
+        "color": particleColor,
+        "opacity": 0.4,
+        "width": 1
+      },
+      "move": {
+        "enable": true,
+        "speed": 6,
+        "direction": "none",
+        "random": false,
+        "straight": false,
+        "out_mode": "out",
+        "bounce": false,
+        "attract": {
+          "enable": false,
+          "rotateX": 600,
+          "rotateY": 1200
+        }
+      }
+    },
+    "interactivity": {
+      "detect_on": "canvas",
+      "events": {
+        "onhover": {
+          "enable": true,
+          "mode": "repulse"
+        },
+        "onclick": {
+          "enable": true,
+          "mode": "push"
+        },
+        "resize": true
+      },
+      "modes": {
+        "grab": {
+          "distance": 400,
+          "line_linked": {
+            "opacity": 1
+          }
+        },
+        "bubble": {
+          "distance": 400,
+          "size": 40,
+          "duration": 2,
+          "opacity": 8,
+          "speed": 3
+        },
+        "repulse": {
+          "distance": 200,
+          "duration": 0.4
+        },
+        "push": {
+          "particles_nb": 4
+        },
+        "remove": {
+          "particles_nb": 2
+        }
+      }
+    },
+    "retina_detect": true
+  });
+}
+
+// Fungsi untuk mengatur ukuran font
+function setFontSize(size) {
+  document.documentElement.style.setProperty('--base-font-size', size + 'px');
+  document.body.style.fontSize = size + 'px';
+  document.getElementById('fontSizeValue').textContent = size + 'px';
+  localStorage.setItem('userFontSize', size);
+}
+
+// Detect system theme preference
+function getSystemTheme() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+// Apply theme to TOC items
+function updateTOCStyles() {
+  const tocItems = document.querySelectorAll('#TOC a');
+  const currentTheme = localStorage.getItem('userTheme') || 'system';
+  const effectiveTheme = currentTheme === 'system' ? 
+                          (document.documentElement.getAttribute('data-theme') || 'system') : 
+                          currentTheme;
+  
+  tocItems.forEach(item => {
+    item.style.color = getComputedStyle(document.documentElement).getPropertyValue('--toc-item-text');
+    item.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--toc-item-bg');
+  });
+}
+
+// Fungsi untuk mengatur tema
+function setTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    setActiveThemeButton('dark-btn');
+  } else if (theme === 'light') {
+    document.documentElement.removeAttribute('data-theme');
+    setActiveThemeButton('light-btn');
+  } else if (theme === 'system') {
+    // Apply system theme
+    document.documentElement.setAttribute('data-theme', 'system');
+    setActiveThemeButton('system-btn');
+  }
+  
+  // Update TOC colors after theme change
+  setTimeout(updateTOCStyles, 50);
+  
+  // Update particles colors
+  setTimeout(updateParticlesColors, 50);
+  
+  localStorage.setItem('userTheme', theme);
+}
+
+// Fungsi untuk menandai tombol tema aktif
+function setActiveThemeButton(buttonId) {
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.remove('active-theme');
+  });
+  document.getElementById(buttonId).classList.add('active-theme');
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  // Inisialisasi particles.js
+  initParticles();
+  
+  // Initialize font size
+  const savedFontSize = localStorage.getItem('userFontSize');
+  const fontSizeSlider = document.getElementById('fontSize');
+  if (savedFontSize) {
+    fontSizeSlider.value = savedFontSize;
+    setFontSize(savedFontSize);
+  } else {
+    setFontSize(16);
+  }
+  
+  // Initialize theme
+  const savedTheme = localStorage.getItem('userTheme');
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else {
+    setTheme('system');
+  }
+  
+  // Listen for system theme changes
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (localStorage.getItem('userTheme') === 'system') {
+        setTheme('system');
+      }
+    });
+  }
+  
+  // Add a MutationObserver to update TOC styles when the document changes
+  const observer = new MutationObserver(updateTOCStyles);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  
+  // Initial update of TOC styles
+  updateTOCStyles();
+});
+
+// Event listener untuk perubahan ukuran font
+document.getElementById('fontSize').addEventListener('input', function() {
+  setFontSize(this.value);
+});
+
+// Event listener untuk tombol tema
+document.getElementById('light-btn').addEventListener('click', function() {
+  setTheme('light');
+});
+
+document.getElementById('dark-btn').addEventListener('click', function() {
+  setTheme('dark');
+});
+
+document.getElementById('system-btn').addEventListener('click', function() {
+  setTheme('system');
+});
+</script>
+```
+

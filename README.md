@@ -6,9 +6,8 @@ This repository presents a **robust regression analysis** using **S-estimation**
 ---
 
 ### Repository Contents:
-- **Data Description**  
-- **Theoretical Background** (Robust Regression, S-estimator)  
-- **Source Code** (`R`)  
+- **Data Description**   
+- **Source Code** (`R/html`)  
 - **Robust Regression Model**  
 
 ---

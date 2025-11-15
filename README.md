@@ -21,4 +21,4 @@ This repository presents a **robust regression analysis** using **S-estimation**
 
 > **Key Insight**: Sales, inventory, and marketing have a significant impact on profits.
 
-[Run in R](https://rpubs.com/leomartsys/SIM_CM1)
+[🔗 View Rpubs](https://rpubs.com/leomartsys/SIM_CM1)
